@@ -1,6 +1,6 @@
 # Bolts-Example
 
-Simple Example to learn Bolts
+Simple Example to learn [Bolts](https://github.com/BoltsFramework/Bolts-iOS)
 
 ## Use cocoapods developer ##
 
