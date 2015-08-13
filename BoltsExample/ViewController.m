@@ -107,13 +107,15 @@
     NSLog(@"%s", __FUNCTION__);
     BFTaskCompletionSource *s = [BFTaskCompletionSource taskCompletionSource];
     [s.task continueWithBlock:^id(BFTask *task) {
+        NSLog(@"result: %@", task.result);
         NSLog(@"A");
         return nil;
     }];
 
-    [s setResult:@YES];
+    [s setResult:@"E"];
 
     [s.task continueWithBlock:^id(BFTask *task) {
+        NSLog(@"result: %@", task.result);
         NSLog(@"B");
         return nil;
     }];
