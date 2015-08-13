@@ -18,7 +18,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.actions = @[@"Async method"];
+    self.actions = @[@"Cancel Flow", @"Cancel Flow 2", @"Set Result", @"Set Result 2"];
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -50,12 +51,99 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     switch (indexPath.row) {
         case 0:
-
+            [self cancelFlow];
             break;
-
+        case 1:
+            [self cancelFlow2];
+            break;
+        case 2:
+            [self setResultWithSource];
+            break;
+        case 3:
+            [self setResultWithSource2];
+            break;
         default:
             break;
     }
+}
+
+- (void)cancelFlow {
+    NSLog(@"%s", __FUNCTION__);
+    BFCancellationTokenSource *cts = [BFCancellationTokenSource cancellationTokenSource];
+    [cts.token registerCancellationObserverWithBlock:^{
+        NSLog(@"A");
+    }];
+
+    BFTask *task = [BFTask taskWithDelay:500];
+    [task continueWithBlock:^id(BFTask *task) {
+        NSLog(@"B");
+        return nil;
+    } cancellationToken:cts.token];
+
+    NSLog(@"C");
+
+    [cts cancel];
+}
+
+- (void)cancelFlow2 {
+    NSLog(@"%s", __FUNCTION__);
+    BFCancellationTokenSource *cts = [BFCancellationTokenSource cancellationTokenSource];
+    [cts.token registerCancellationObserverWithBlock:^{
+        NSLog(@"A");
+    }];
+
+    BFTask *task = [BFTask taskWithResult:nil];
+    [task continueWithBlock:^id(BFTask *task) {
+        NSLog(@"B");
+        return nil;
+    } cancellationToken:cts.token];
+
+    NSLog(@"C");
+
+    [cts cancel];
+}
+
+- (void)setResultWithSource {
+    NSLog(@"%s", __FUNCTION__);
+    BFTaskCompletionSource *s = [BFTaskCompletionSource taskCompletionSource];
+    [s.task continueWithBlock:^id(BFTask *task) {
+        NSLog(@"A");
+        return nil;
+    }];
+
+    [s setResult:@YES];
+
+    [s.task continueWithBlock:^id(BFTask *task) {
+        NSLog(@"B");
+        return nil;
+    }];
+
+    NSLog(@"C");
+}
+
+- (void)setResultWithSource2 {
+    NSLog(@"%s", __FUNCTION__);
+    BFTaskCompletionSource *s = [BFTaskCompletionSource taskCompletionSource];
+
+    [[BFTask taskWithDelay:1] continueWithBlock:^id(BFTask *task) {
+        [s setResult:@YES];
+        return nil;
+    }];
+
+    [[s.task continueWithBlock:^id(BFTask *task) {
+        NSLog(@"A");
+        return task;
+    }] continueWithBlock:^id(BFTask *task) {
+        NSLog(@"B");
+        return nil;
+    }];
+
+    [s.task continueWithBlock:^id(BFTask *task) {
+        NSLog(@"C");
+        return nil;
+    }];
+
+    NSLog(@"D");
 }
 
 @end
