@@ -18,7 +18,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.actions = @[@"Cancel Flow", @"Cancel Flow 2", @"Set Result", @"Set Result 2"];
+    self.actions = @[@"Cancel Flow", @"Cancel Flow 2", @"Set Result", @"Set Result 2", @"Cancel token"];
 
 }
 
@@ -61,6 +61,9 @@
             break;
         case 3:
             [self setResultWithSource2];
+            break;
+        case 4:
+            [self cancelToken];
             break;
         default:
             break;
@@ -146,6 +149,36 @@
     }];
 
     NSLog(@"D");
+}
+
+- (void)cancelToken {
+    __block BOOL cancel = NO;
+
+    BFTaskCompletionSource *s = [BFTaskCompletionSource taskCompletionSource];
+
+    BFCancellationTokenSource *cts = [BFCancellationTokenSource cancellationTokenSource];
+    [cts.token registerCancellationObserverWithBlock:^{
+        cancel = YES;
+        NSLog(@"D");
+        [s setResult:nil];
+    }];
+
+    [[BFTask taskWithDelay:10] continueWithBlock:^id(BFTask *task) {
+        [cts cancel];
+        NSLog(@"cacnel %@", cancel ? @"YES":@"NO");
+        return nil;
+    }];
+
+    [s.task continueWithBlock:^id(BFTask *task) {
+        if (task.cancelled) {
+            NSLog(@"C");
+        }
+        NSLog(@"A");
+        return nil;
+    } cancellationToken:cts.token];
+
+    NSLog(@"B");
+    NSLog(@"cacnel %@", cancel ? @"YES":@"NO");
 }
 
 @end
