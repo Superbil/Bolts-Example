@@ -2,7 +2,7 @@
 
 Simple Example to learn [Bolts](https://github.com/BoltsFramework/Bolts-iOS)
 
-You can file slide at ``Bolts - Cocoaheads Taipei - 201508``
+Slide is `Bolts - Cocoaheads Taipei - 201508`.
 
 ## Use cocoapods developer ##
 
