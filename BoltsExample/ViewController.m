@@ -159,6 +159,7 @@
 }
 
 - (void)cancelToken {
+    NSLog(@"%s", __FUNCTION__);
     __block BOOL cancel = NO;
 
     BFTaskCompletionSource *s = [BFTaskCompletionSource taskCompletionSource];
@@ -189,6 +190,7 @@
 }
 
 - (void)setResultOrCancel {
+    NSLog(@"%s", __FUNCTION__);
     BFTaskCompletionSource *s = [BFTaskCompletionSource taskCompletionSource];
 
     BFCancellationTokenSource *cts = [BFCancellationTokenSource cancellationTokenSource];
@@ -213,6 +215,7 @@
 }
 
 - (void)justCancel {
+    NSLog(@"%s", __FUNCTION__);
     BFTaskCompletionSource *s = [BFTaskCompletionSource taskCompletionSource];
 
     [[BFTask taskWithDelay:10] continueWithBlock:^id(BFTask *task) {
